@@ -1,0 +1,22 @@
+import express from "express";
+import dotenv from "dotenv";
+import { connectDB } from "./libs/db";
+import authRoute from "./routes/authRoute";
+
+dotenv.config();
+const app = express();
+const PORT = process.env.PORT || 5001;
+
+//middlewares
+app.use(express.json());
+
+// public route
+app.use("/api/auth", authRoute);
+
+// private route
+
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server bắt đầu trên cổng ${PORT}`);
+  });
+});

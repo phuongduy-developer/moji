@@ -1,0 +1,42 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // Tắt format mặc định của VS Code với TS/TSX để không tranh giành với ESLint
+  "[typescript]": {
+    "editor.formatOnSave": false
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": false
+  },
+  "[javascript]": {
+    "editor.formatOnSave": false
+  },
+  "[javascriptreact]": {
+    "editor.formatOnSave": false
+  },
+
+  // Giao toàn quyền cho ESLint tự động fix lỗi và format code (vì Prettier đã tích hợp sẵn trong ESLint của dự án)
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.idea": true
+  },
+  "jest.autoRun": "off",
+  "debug.javascript.unmapMissingSources": true,
+  "i18n-ally.localesPaths": ["public/locales", "src/libs/i18n"],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "makefile.configureOnOpen": false,
+  "i18n-ally.keystyle": "flat",
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
