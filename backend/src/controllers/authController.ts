@@ -12,7 +12,7 @@ interface SignUpBody {
 }
 
 export const signUp = async (
-  req: Request<{}, {}, SignUpBody>,
+  req: Request<unknown, unknown, SignUpBody>,
   res: Response,
 ) => {
   try {
