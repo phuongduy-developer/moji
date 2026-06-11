@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5001;
 //middlewares
 app.use(express.json());
 
-// public route
+// public route (không cần đăng nhập)
 app.use("/api/auth", authRoute);
 
 // private route

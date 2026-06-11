@@ -13,6 +13,7 @@ const userSchema = new Schema(
     hashedPassword: {
       type: String,
       required: true,
+      select: false, // ẩn khỏi query mặc định vì lý do bảo mật
     },
     email: {
       type: String,
