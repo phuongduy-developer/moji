@@ -1,6 +1,6 @@
 import bycrypt from "bcrypt";
 import { Request, Response } from "express";
-import HTTP_STATUS from "../constants/httpsStatus";
+import HTTP_STATUS from "../constants/httpStatus";
 import UserModel from "../models/User";
 
 interface SignUpBody {

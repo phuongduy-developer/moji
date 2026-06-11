@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document, InferSchemaType } from "mongoose";
+import mongoose, { Schema, InferSchemaType } from "mongoose";
+import validator from "validator";
 
 const userSchema = new Schema(
   {
@@ -18,6 +19,10 @@ const userSchema = new Schema(
       required: true,
       unique: true,
       lowercase: true,
+      validate: {
+        validator: (value: string) => validator.isEmail(value),
+        message: "Email không đúng định dạng hợp lệ",
+      },
     },
     displayName: {
       type: String,
@@ -25,7 +30,7 @@ const userSchema = new Schema(
       trim: true,
     },
     avatarUrl: {
-      type: String, //link CND để hiển thị hình
+      type: String, //link CDN để hiển thị hình
     },
     avatarId: {
       type: String, // Cloundinary public_id để xóa hình
