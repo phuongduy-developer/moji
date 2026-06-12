@@ -124,7 +124,7 @@ export const signIn = async (
     });
 
     // trả refreshToken về trong cookies
-
+    res.cookie();
     //
   } catch (error) {
     handleError(error, res, "signin");
