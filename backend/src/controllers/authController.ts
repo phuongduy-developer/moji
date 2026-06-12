@@ -3,6 +3,9 @@ import { Request, Response } from "express";
 import HTTP_STATUS from "../constants/httpStatus";
 import UserModel from "../models/User";
 import { handleError } from "../utils/handleError";
+import { sign } from "jsonwebtoken";
+import crypto from "crypto";
+import SessionModel from "../models/Session";
 
 interface SignUpBody {
   username: string;
@@ -12,6 +15,8 @@ interface SignUpBody {
   lastName: string;
 }
 
+const ACCESS_TOKEN_TTL = "30m"; //thường là dưới 15m
+const REFRESH_TOKEN_TTL = 14 * 24 * 60 * 60 * 1000; // 14 ngày
 export const signUp = async (
   req: Request<unknown, unknown, SignUpBody>,
   res: Response,
@@ -73,7 +78,7 @@ export const signIn = async (
       });
     }
     // lấy hashedPassword trong db để so với password input
-    const user = UserModel.findOne({ username });
+    const user = await UserModel.findOne({ username });
     if (!user) {
       return res.status(HTTP_STATUS.UNAUTHORIZED).json({
         message: "username hoặc password không chính xác",
@@ -81,15 +86,42 @@ export const signIn = async (
     }
 
     // Kiêm tra password
-    // const passwordCorrect = await bycrypt.compare(
-    //   password,
-    //   user.hashedPassword,
-    // );
+    const passwordCorrect = await bycrypt.compare(
+      password,
+      user.hashedPassword,
+    );
+
+    if (!passwordCorrect) {
+      return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+        message: "Username hoặc password không chính xác",
+      });
+    }
     // nếu khớp, tạo accessToken với JWT
+    const accessToken = sign(
+      {
+        userId: user._id,
+      },
+      process.env.ACCESS_TOKEN_SECRET as string,
+      {
+        expiresIn: ACCESS_TOKEN_TTL,
+      },
+    );
 
     // tạo refresh token
-
+    const refreshToken = crypto.randomBytes(64).toString("hex");
+    /**
+     * tại sao không lưu AT vào DB mà chỉ lưu mỗi RT thôi?
+     * vì AT chỉ sống vài phút nên ko cần, còn RT sống lâu hơn nhiều nên
+     * lỡ HACKER lỡ lấy RT thì chỉ cần xóa trong DB là sẽ tự động vô hiệu hóa
+     * còn chỉ bọc trong JWT r gửi qua cookies thì khi bị đánh cắp sẽ ko có cách nào vô
+     * hiệu hóa
+     */
     // tạo session mới để lưu refresh token
+    await SessionModel.create({
+      userId: user._id,
+      refreshToken,
+      expiresAt: new Date(Date.now() + REFRESH_TOKEN_TTL),
+    });
 
     // trả refreshToken về trong cookies
 
