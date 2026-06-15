@@ -7,7 +7,7 @@ const sessionSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      index: true,
+      index: true, // truy vấn nhanh hơn
     },
     refreshToken: {
       type: String,

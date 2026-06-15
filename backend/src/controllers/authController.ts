@@ -17,6 +17,7 @@ interface SignUpBody {
 
 const ACCESS_TOKEN_TTL = "30m"; //thường là dưới 15m
 const REFRESH_TOKEN_TTL = 14 * 24 * 60 * 60 * 1000; // 14 ngày
+
 export const signUp = async (
   req: Request<unknown, unknown, SignUpBody>,
   res: Response,
@@ -124,9 +125,42 @@ export const signIn = async (
     });
 
     // trả refreshToken về trong cookies
-    res.cookie();
-    //
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true, // KHÔNG THỂ BỊ TRUY CẬP BẰNG JS
+      secure: true, // chỉ truy cập bằng https
+      sameSite: "none", // backend, frontend deploy riêng, chung là strict
+      maxAge: REFRESH_TOKEN_TTL,
+    });
+    // trả về accessToken về trong res
+    return res.status(HTTP_STATUS.OK).json({
+      message: `User ${user.displayName} đã logged in!`,
+      accessToken,
+    });
   } catch (error) {
     handleError(error, res, "signin");
+  }
+};
+
+export const signOut = async (
+  req: Request<unknown, unknown, SignInBody>,
+  res: Response,
+) => {
+  try {
+    // lấy refresh token từ cookie
+    const token = req?.cookies?.refreshToken; // nhớ import cookie parser vào server.ts
+
+    if (token) {
+      // xóa refresh token trong session
+      await SessionModel.deleteOne({
+        refreshToken: token,
+      });
+
+      // xóa cookie
+      res.clearCookie("refreshToken");
+    }
+
+    return res.sendStatus(HTTP_STATUS.NO_CONTENT);
+  } catch (error) {
+    handleError(error, res, "signout");
   }
 };
