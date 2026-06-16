@@ -8,7 +8,7 @@ interface AccessTokenPayload extends JwtPayload {
   userId: string;
 }
 
-export const protectedRoute = (
+export const protectedRoute = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -31,8 +31,8 @@ export const protectedRoute = (
         if (err) {
           console.error(err);
           return res.status(HTTP_STATUS.FORBIDDEN).json({
-            message: 'Access token hết hạn hoặc không đúng'
-          })
+            message: "Access token hết hạn hoặc không đúng",
+          });
         }
 
         if (typeof decodedUser === "string" || !decodedUser?.userId) {
@@ -42,14 +42,16 @@ export const protectedRoute = (
         }
 
         const { userId } = decodedUser as AccessTokenPayload;
-        const user = await UserModel.findById(userId).select("-hashedPassword");
+        const user = await UserModel.findById(userId).select(
+          "-hashedPassword -__v",
+        );
         if (!user) {
-          return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+          return res.status(HTTP_STATUS.NOT_FOUND).json({
             message: "User không tồn tại",
           });
         }
 
-        (req as any).user = user;
+        req.user = user;
         next();
       },
     );

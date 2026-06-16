@@ -141,10 +141,7 @@ export const signIn = async (
   }
 };
 
-export const signOut = async (
-  req: Request<unknown, unknown, SignInBody>,
-  res: Response,
-) => {
+export const signOut = async (req: Request, res: Response) => {
   try {
     // lấy refresh token từ cookie
     const token = req?.cookies?.refreshToken; // nhớ import cookie parser vào server.ts
