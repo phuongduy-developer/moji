@@ -10,6 +10,6 @@ export const authMe = async (req: Request, res: Response) => {
       user,
     });
   } catch (error) {
-    handleError(error, res, "signup");
+    handleError(error, res, "authMe");
   }
 };
