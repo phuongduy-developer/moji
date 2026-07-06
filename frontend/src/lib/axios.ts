@@ -6,7 +6,7 @@ const api = axios.create({
     import.meta.env.MODE === "development"
       ? "http://localhost:5001/api"
       : "/api",
-  withCredentials: true,
+  withCredentials: true, // phải có dòng này cookies mới gửi đc lên server
 });
 
 // gắn access token vào req header

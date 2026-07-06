@@ -94,7 +94,7 @@ export const signIn = async (
 
     if (!passwordCorrect) {
       return res.status(HTTP_STATUS.UNAUTHORIZED).json({
-        message: "Username hoặc password không chính xác",
+        message: "username hoặc password không chính xác",
       });
     }
     // nếu khớp, tạo accessToken với JWT

@@ -11,8 +11,8 @@ const PORT = process.env.PORT || 5001;
 
 //middlewares
 app.use(express.json());
-app.use(cookieParser());
-// public route (không cần đăng nhập)
+app.use(cookieParser()); // cho phép lấy truy cập cookies từ FE
+// public route (không cần đăng nhập) dành cho sign in, sign up
 app.use("/api/auth", authRoute);
 
 // private route
