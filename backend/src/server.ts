@@ -5,6 +5,8 @@ import authRoute from "./routes/authRoute";
 import cookieParser from "cookie-parser";
 import userRoute from "./routes/userRoute";
 import { protectedRoute } from "./middlewares/authMiddleware";
+import cors from "cors";
+
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -12,6 +14,12 @@ const PORT = process.env.PORT || 5001;
 //middlewares
 app.use(express.json());
 app.use(cookieParser()); // cho phép lấy truy cập cookies từ FE
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  }),
+);
 // public route (không cần đăng nhập) dành cho sign in, sign up
 app.use("/api/auth", authRoute);
 
