@@ -161,3 +161,51 @@ export const signOut = async (req: Request, res: Response) => {
     handleError(error, res, "signout");
   }
 };
+
+export const refreshToken = async (req: Request, res: Response) => {
+  try {
+    // Lấy refreshToken trong cookies
+    const token = req?.cookies?.refreshToken;
+
+    if (!token) {
+      return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+        message: "Refresh token không tồn tại",
+      });
+    }
+    // so với refreshToken trong db
+    const session = await SessionModel.findOne({
+      refreshToken: token,
+    });
+
+    if (!session) {
+      return res.status(HTTP_STATUS.FORBIDDEN).json({
+        message: "Token không hợp lệ hoặc đã hết hạn",
+      });
+    }
+
+    // kiếm tra hết hạn chưa
+    if (session.expiresAt < new Date()) {
+      return res.status(HTTP_STATUS.FORBIDDEN).json({
+        message: "Token đã hết hạn",
+      });
+    }
+
+    // tạo access token mới
+    const accessToken = sign(
+      {
+        userId: session.userId,
+      },
+      process.env.ACCESS_TOKEN_SECRET as string,
+      {
+        expiresIn: ACCESS_TOKEN_TTL,
+      },
+    );
+
+    // return
+    return res.status(HTTP_STATUS.OK).json({
+      accessToken,
+    });
+  } catch (error) {
+    handleError(error, res, "refreshToken");
+  }
+};

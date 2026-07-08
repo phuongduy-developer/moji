@@ -12,6 +12,10 @@ const api = axios.create({
 // gắn access token vào req header
 api.interceptors.request.use((config) => {
   const { accessToken } = useAuthStore.getState();
+  // Hàm .getState() là cách Zustand cho phép bạn truy cập trực tiếp vào giá trị hiện tại của Store bằng Javascript thuần,
+  // không phụ thuộc vào React.
+  // Nó sẽ "vào thẳng" kho lưu trữ, lấy ra đúng giá trị accessToken ngay tại thời điểm API được gọi để gắn vào Header,
+  // hoàn toàn hợp lệ và không vi phạm quy tắc nào của React.
 
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;

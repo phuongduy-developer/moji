@@ -4,6 +4,7 @@ import { navigation } from "./navigations";
 import ChatAppPage from "./pages/ChatAppPage";
 import { Toaster } from "sonner";
 import SignupPage from "./pages/SignUpPage";
+import ProtectedRoute from "./components/auth/protected-route";
 
 function App() {
   return (
@@ -15,7 +16,9 @@ function App() {
           <Route path={navigation.signin} element={<SignInPage />} />
           <Route path={navigation.signup} element={<SignupPage />} />
           {/* Protected routes */}
-          <Route path={navigation.home} element={<ChatAppPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path={navigation.home} element={<ChatAppPage />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </>

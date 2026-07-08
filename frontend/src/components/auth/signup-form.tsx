@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { Button } from "../ui/button";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { navigation } from "@/navigations";
 
 const signUpSchema = z.object({
   firstname: z.string().min(1, "Tên bắt buộc phải có"),
@@ -39,7 +40,7 @@ export function SignupForm({
     // gọi backend để signup
     await signUp(username, password, email, firstname, lastname);
 
-    navigate("/signin");
+    navigate(navigation.signin);
   };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
