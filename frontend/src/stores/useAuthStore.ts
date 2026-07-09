@@ -77,6 +77,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
+  //khi reload page sẽ mất thông tin user và accessToken do đang lưu ở bộ nhớ tạm
   refresh: async () => {
     try {
       set({ loading: true });
