@@ -1,5 +1,9 @@
 import { useAuthStore } from "@/stores/useAuthStore";
-import axios from "axios";
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
+
+interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
+  _retryCount?: number;
+}
 
 const api = axios.create({
   baseURL:
@@ -25,41 +29,40 @@ api.interceptors.request.use((config) => {
 });
 
 // tự động gọi refresh api khi access token hết hạn
-// api.interceptors.response.use(
-//   (res) => res,
-//   async (error) => {
-//     const originalRequest = error.config;
+api.interceptors.response.use(
+  (res) => res,
+  async (error: AxiosError) => {
+    console.log("error", JSON.stringify(error));
+    console.log("errorConfig", error.config);
+    const config = error.config as CustomAxiosRequestConfig;
+    const url = error.config.url;
 
-//     // những api không cần check
-//     if (
-//       originalRequest.url.includes("/auth/signin") ||
-//       originalRequest.url.includes("/auth/signup") ||
-//       originalRequest.url.includes("/auth/refresh")
-//     ) {
-//       return Promise.reject(error);
-//     }
+    if (
+      url.includes("/auth/signin") ||
+      url.includes("/auth/signup") ||
+      url.includes("/auth/refresh")
+    ) {
+      return Promise.reject(error);
+    }
 
-//     originalRequest._retryCount = originalRequest._retryCount || 0;
+    config._retryCount = 0;
 
-//     if (error.response?.status === 403 && originalRequest._retryCount < 4) {
-//       originalRequest._retryCount += 1;
+    if (error.response.status === 403 && config._retryCount <= 4) {
+      config._retryCount += 1;
+      const res = await api.post<{
+        accessToken: string;
+      }>("/auth/refresh", { withCredentials: true });
+      const newAccessToken = res.data.accessToken;
 
-//       try {
-//         const res = await api.post("/auth/refresh", { withCredentials: true });
-//         const newAccessToken = res.data.accessToken;
+      useAuthStore.getState().setAccessToken(newAccessToken);
 
-//         useAuthStore.getState().setAccessToken(newAccessToken);
+      config.headers.Authorization = `Bearer ${newAccessToken}`;
 
-//         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-//         return api(originalRequest);
-//       } catch (refreshError) {
-//         useAuthStore.getState().clearState();
-//         return Promise.reject(refreshError);
-//       }
-//     }
+      return api(config);
+    }
 
-//     return Promise.reject(error);
-//   },
-// );
+    return Promise.reject(error);
+  },
+);
 
 export default api;

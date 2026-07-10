@@ -41,4 +41,11 @@ export const authService = {
     }>("/auth/refresh", { withCredentials: true });
     return res.data.accessToken;
   },
+
+  test: async () => {
+    const res = await api.get<{
+      message: string;
+    }>("/users/test", { withCredentials: true });
+    return res.data.message;
+  },
 };
