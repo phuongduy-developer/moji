@@ -13,3 +13,12 @@ export const authMe = async (req: Request, res: Response) => {
     handleError(error, res, "authMe");
   }
 };
+export const test = async (req: Request, res: Response) => {
+  try {
+    return res.status(HTTP_STATUS.OK).json({
+      message: "test ok",
+    });
+  } catch (error) {
+    handleError(error, res, "test");
+  }
+};
