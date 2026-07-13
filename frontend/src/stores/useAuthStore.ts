@@ -7,6 +7,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   accessToken: null,
   user: null,
   loading: false,
+  isInitialized: false,
 
   setAccessToken: (accessToken) => {
     set({ accessToken });
@@ -78,9 +79,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   //khi reload page sẽ mất thông tin user và accessToken do đang lưu ở bộ nhớ tạm
-  refresh: async () => {
+  refresh: async (isInitialCheck = false) => {
     try {
-      set({ loading: true });
+      if (!isInitialCheck) set({ loading: true });
       const { user, fetchMe, setAccessToken } = get();
       const accessToken = await authService.refresh();
 
@@ -94,7 +95,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
       get().clearState();
     } finally {
-      set({ loading: false });
+      set({ loading: false, isInitialized: true });
     }
   },
 }));
