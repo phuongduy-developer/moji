@@ -8,6 +8,8 @@ import ProtectedRoute from "./components/auth/protected-route";
 import GuestRoute from "./components/auth/guest-route";
 import { useAuthStore } from "./stores/useAuthStore";
 import { useEffect } from "react";
+import { LoaderIcon } from "lucide-react";
+import { cn } from "./lib/utils";
 
 function App() {
   const refresh = useAuthStore((state) => state.refresh);
@@ -20,7 +22,11 @@ function App() {
   if (!isInitialized) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
-        <div>Đang khởi tạo ứng dụng...</div>
+        <LoaderIcon
+          role="status"
+          aria-label="Loading"
+          className={cn("size-10 animate-spin")}
+        />
       </div>
     );
   }

@@ -32,8 +32,6 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   async (error: AxiosError) => {
-    console.log("error", JSON.stringify(error));
-    console.log("errorConfig", error.config);
     const config = error.config as CustomAxiosRequestConfig;
     const url = error.config.url;
 

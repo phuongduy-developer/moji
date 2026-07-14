@@ -15,7 +15,7 @@ interface SignUpBody {
   lastName: string;
 }
 
-const ACCESS_TOKEN_TTL = "15s"; //thường là dưới 15m
+const ACCESS_TOKEN_TTL = "15m"; //thường là dưới 15m
 const REFRESH_TOKEN_TTL = 14 * 24 * 60 * 60 * 1000; // 14 ngày
 
 export const signUp = async (

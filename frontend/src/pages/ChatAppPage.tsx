@@ -18,7 +18,7 @@ const ChatAppPage = () => {
   };
   return (
     <div className="">
-      {user.username}
+      {user?.username}
       <Logout />
       <Button variant="outline" size="lg" onClick={handleTest}>
         test

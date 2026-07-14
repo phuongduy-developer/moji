@@ -92,7 +92,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
     } catch (error) {
       console.error(error);
-      toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
+      // toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
       get().clearState();
     } finally {
       set({ loading: false, isInitialized: true });
