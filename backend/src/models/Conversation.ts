@@ -31,20 +31,62 @@ const groupSchema = new mongoose.Schema(
   {
     _id: false,
   },
+); // nếu cần thêm ảnh đại diện thì thêm, ảnh nền
+
+const lastMessageSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+  },
+  content: {
+    type: String,
+    default: null,
+  },
+  sender: mongoose,
+});
+
+const conversationSchema = new mongoose.Schema(
+  {
+    type: {
+      type: String,
+      enum: ["direct", "group"],
+      required: true,
+    },
+
+    participants: {
+      type: [participantSchema],
+      required: true,
+    },
+    group: {
+      type: groupSchema,
+    },
+    lastMessageAt: {
+      type: Date,
+    },
+    seenBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    lastMessage: {
+      type: lastMessageSchema,
+      default: null,
+    },
+    unreadCounts: {
+      type: Map,
+      of: Number,
+      default: {},
+    },
+  },
+  {
+    timestamps: true,
+  },
 );
 
-const conversationSchema = new mongoose.Schema({
-  type: {
-    type: String,
-    enum: ["direct", "group"],
-    required: true,
-  },
-
-  participants: {
-    type: [participantSchema],
-    required: true,
-  },
-  group: {
-    type: groupSchema,
-  },
+conversationSchema.index({
+  "participant.userId": 1,
+  lastMessageAt: -1,
 });
+
+const ConversationModel = mongoose.model("Conversation", conversationSchema);
+export default ConversationModel;
