@@ -33,19 +33,19 @@ api.interceptors.response.use(
   (res) => res,
   async (error: AxiosError) => {
     const config = error.config as CustomAxiosRequestConfig;
-    const url = error.config.url;
+    const url = error?.config?.url;
 
     if (
-      url.includes("/auth/signin") ||
-      url.includes("/auth/signup") ||
-      url.includes("/auth/refresh")
+      url?.includes("/auth/signin") ||
+      url?.includes("/auth/signup") ||
+      url?.includes("/auth/refresh")
     ) {
       return Promise.reject(error);
     }
 
     config._retryCount = 0;
 
-    if (error.response.status === 403 && config._retryCount <= 4) {
+    if (error?.response?.status === 403 && config._retryCount <= 4) {
       config._retryCount += 1;
       const res = await api.post<{
         accessToken: string;

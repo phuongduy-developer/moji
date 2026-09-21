@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import userRoute from "./routes/userRoute";
 import { protectedRoute } from "./middlewares/authMiddleware";
 import cors from "cors";
+import friendRoute from "./routes/friendRoute";
 
 dotenv.config();
 const app = express();
@@ -20,12 +21,14 @@ app.use(
     credentials: true,
   }),
 );
+
 // public route (không cần đăng nhập) dành cho sign in, sign up
 app.use("/api/auth", authRoute);
 
 // private route
 app.use(protectedRoute);
 app.use("/api/users", userRoute);
+app.use("/api/friends", friendRoute);
 
 connectDB().then(() => {
   app.listen(PORT, () => {

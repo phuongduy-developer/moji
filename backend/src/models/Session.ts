@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
+import modelList from "../constants/modelList";
 
 const sessionSchema = new mongoose.Schema(
   {
     userId: {
       // lưu ID người dùng đang đăng nhập
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: modelList.user,
       required: true,
       index: true, // truy vấn nhanh hơn
     },
@@ -34,6 +35,6 @@ sessionSchema.index(
   },
 );
 
-const SessionModel = mongoose.model("Sesssion", sessionSchema);
+const SessionModel = mongoose.model(modelList.session, sessionSchema);
 
 export default SessionModel;

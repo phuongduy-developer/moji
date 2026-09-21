@@ -1,21 +1,30 @@
 import mongoose from "mongoose";
+import modelList from "../constants/modelList";
 
-const messageSchema = new mongoose.Schema(
+interface IMessage {
+  conversationId: mongoose.Types.ObjectId;
+  senderId: mongoose.Types.ObjectId;
+  content: string;
+  imgUrl: string;
+}
+
+// lưu từng tin nhắn giữa 2 người dùng
+const messageSchema = new mongoose.Schema<IMessage>(
   {
     conversationId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Conversation",
+      ref: modelList.conversation,
       required: true,
-      index: true,
+      // index: true, // tối ưu tốc độ truy vấn theo hội thoại, đã dùng compound index r thì ko cần đánh index
     },
     senderId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: modelList.user,
       required: true,
     },
     content: {
       type: String,
-      trim: true,
+      trim: true, // tự động xoá khoảng trắng
     },
     imgUrl: {
       type: String,
@@ -32,6 +41,6 @@ messageSchema.index({
   createdAt: -1,
 });
 
-const Message = mongoose.model("Message", messageSchema);
+const Message = mongoose.model(modelList.message, messageSchema);
 
 export default Message;

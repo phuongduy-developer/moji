@@ -1,10 +1,14 @@
 import mongoose from "mongoose";
+import modelList from "../constants/modelList";
 
+// Đại diện cho 1 cuộc hội thoại trong ứng dụng
+
+//Mô tả thông tin cơ bản của người dùng trong cuộc trò chuyện. Tách ra để cho code dễ đọc hơn
 const participantSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: modelList.user,
       required: true,
     },
     joinedAt: {
@@ -25,7 +29,7 @@ const groupSchema = new mongoose.Schema(
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: modelList.user,
     },
   },
   {
@@ -33,16 +37,28 @@ const groupSchema = new mongoose.Schema(
   },
 ); // nếu cần thêm ảnh đại diện thì thêm, ảnh nền
 
-const lastMessageSchema = new mongoose.Schema({
-  _id: {
-    type: String,
+const lastMessageSchema = new mongoose.Schema(
+  {
+    _id: {
+      type: String, // id của tin nhắn gốc
+    },
+    content: {
+      type: String,
+      default: null,
+    },
+    senderId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: modelList.user,
+    },
+    createdAt: {
+      type: Date,
+      default: null,
+    },
   },
-  content: {
-    type: String,
-    default: null,
+  {
+    _id: false,
   },
-  sender: mongoose,
-});
+);
 
 const conversationSchema = new mongoose.Schema(
   {
@@ -51,7 +67,6 @@ const conversationSchema = new mongoose.Schema(
       enum: ["direct", "group"],
       required: true,
     },
-
     participants: {
       type: [participantSchema],
       required: true,
@@ -65,7 +80,7 @@ const conversationSchema = new mongoose.Schema(
     seenBy: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: modelList.user,
       },
     ],
     lastMessage: {
@@ -84,9 +99,12 @@ const conversationSchema = new mongoose.Schema(
 );
 
 conversationSchema.index({
-  "participant.userId": 1,
+  "participants.userId": 1,
   lastMessageAt: -1,
 });
 
-const ConversationModel = mongoose.model("Conversation", conversationSchema);
+const ConversationModel = mongoose.model(
+  modelList.conversation,
+  conversationSchema,
+);
 export default ConversationModel;

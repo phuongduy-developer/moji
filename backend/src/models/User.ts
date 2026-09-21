@@ -1,5 +1,6 @@
-import mongoose, { Schema, InferSchemaType } from "mongoose";
+import mongoose, { Schema, InferSchemaType, HydratedDocument } from "mongoose";
 import validator from "validator";
+import modelList from "../constants/modelList";
 
 const userSchema = new Schema(
   {
@@ -49,6 +50,6 @@ const userSchema = new Schema(
   },
 );
 
-export type User = InferSchemaType<typeof userSchema>;
-const UserModel = mongoose.model("User", userSchema);
+export type User = HydratedDocument<InferSchemaType<typeof userSchema>>;
+const UserModel = mongoose.model(modelList.user, userSchema);
 export default UserModel;
