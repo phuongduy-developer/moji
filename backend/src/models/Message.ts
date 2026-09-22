@@ -25,7 +25,7 @@ const messageSchema = new mongoose.Schema<IMessage>(
     content: {
       type: String,
       trim: true, // tự động xoá khoảng trắng
-    },
+    },    
     imgUrl: {
       type: String,
     },
@@ -36,6 +36,11 @@ const messageSchema = new mongoose.Schema<IMessage>(
 );
 
 // compound index: index kết hợp nhiều trường, 1: tăng dần, -1: giảm dần
+/*
+dữ liệu được sắp xếp theo conversationId trước, tăng dần, createdAt sau, giảm dần
+khi truy vấn của 1 hội thoại, những tin nhắn có cùng conversationId sẽ nằm cùng nhau, 
+và được sắp xếp theo createdAt giảm dần
+*/
 messageSchema.index({
   conversationId: 1,
   createdAt: -1,
