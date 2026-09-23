@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import HTTP_STATUS from "../constants/httpStatus";
 import FriendModel from "../models/Friend";
 import FriendRequestModel from "../models/FriendRequest";
@@ -16,14 +17,16 @@ export const sendFriendRequest = async (
   try {
     const { message, to } = req.body;
 
-    if (!req?.user) {
-      return res.status(HTTP_STATUS.UNAUTHORIZED).json({
-        message: "Chưa xác thực",
+    if (!to || !mongoose.isValidObjectId(to)) {
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        message: "Người nhận không hợp lệ",
       });
     }
-    const from = req.user?._id.toString();
+
+    const fromId = req.user?._id.toString();
+    const toId  = to.toString();
     //  Kiểm tra có gửi lời mời cho chính mình hay ko
-    if (from === to) {
+    if (fromId === toId) {
       return res.status(HTTP_STATUS.BAD_REQUEST).json({
         message: "Không thể gửi lời mời kết bạn cho chính mình",
       });
@@ -31,7 +34,7 @@ export const sendFriendRequest = async (
 
     // Kiểm tra xem có tồn tại người nhận lời mời kết bạn
     const userExist = await UserModel.exists({
-      _id: to,
+      _id: toId,
     });
 
     if (!userExist) {
@@ -40,8 +43,8 @@ export const sendFriendRequest = async (
       });
     }
 
-    let userA = from;
-    let userB = to.toString();
+    let userA = fromId;
+    let userB = toId;
 
     if (userA > userB) {
       [userA, userB] = [userB, userA];
@@ -51,8 +54,8 @@ export const sendFriendRequest = async (
       FriendModel.findOne({ userA, userB }),
       FriendRequestModel.findOne({
         $or: [
-          { from, to },
-          { from: to, to: from },
+          { from: fromId, to },
+          { from: to, to: fromId },
         ],
       }),
     ]);
@@ -70,7 +73,7 @@ export const sendFriendRequest = async (
     }
 
     const request = await FriendRequestModel.create({
-      from,
+      from: fromId,
       to,
       message,
     });

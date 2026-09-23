@@ -18,6 +18,7 @@ export type GroupType = {
   backgroundUrl?: string;
   backgroundId?: string;
 };
+
 export type LastMessageType = {
   _id: string;
   content: string;

@@ -37,7 +37,7 @@ friendSchema.pre("save", function () {
   }
 });
 
-friendSchema.index({ userA: 1, userB: 1 }, { unique: true });
+friendSchema.index({ userA: 1, userB: 1 }, { unique: true }); //unique: true nghĩa là Mongo sẽ reject lần insert thứ hai (duplicate key).
 
 const FriendModel = mongoose.model(modelList.friend, friendSchema);
 

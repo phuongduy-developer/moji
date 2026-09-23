@@ -6,7 +6,7 @@ export {};
 declare global {
   namespace Express {
     interface Request {
-      user?: User; // Tốt nhất bạn nên import interface User của bạn vào đây thay vì dùng 'any'
+      user: User; // Tốt nhất bạn nên import interface User của bạn vào đây thay vì dùng 'any'
     }
   }
 }
